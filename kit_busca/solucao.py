@@ -3,6 +3,12 @@ class Nodo:
     Implemente a classe Nodo com os atributos descritos na funcao init
     """
 
+    estado: str = None
+    pai = None
+    acao: str = None
+    custo: int = None
+    filhos = []
+
     def __init__(self, estado, pai, acao, custo):
         """
         Inicializa o nodo com os atributos recebidos
@@ -11,8 +17,11 @@ class Nodo:
         :param acao:str, acao a partir do pai que leva a este nodo (None no caso do nó raiz)
         :param custo:int, custo do caminho da raiz até este nó
         """
+        self.estado = estado
+        self.pai = pai
+        self.acao = acao
+        self.custo = custo
         # substitua a linha abaixo pelo seu codigo
-        raise NotImplementedError
 
 
 # 1 2 3
@@ -57,7 +66,7 @@ def sucessor(estado: str):
     return results
 
 
-def expande(nodo):
+def expande(nodo: Nodo):
     """
     Recebe um nodo (objeto da classe Nodo) e retorna um iterable de nodos.
     Cada nodo do iterable é contém um estado sucessor do nó recebido.
@@ -65,7 +74,12 @@ def expande(nodo):
     :return:
     """
     # substituir a linha abaixo pelo seu codigo
-    raise NotImplementedError
+    return list(
+        map(
+            lambda tupla: Nodo(tupla[1], nodo, tupla[0], nodo.custo + 1),
+            sucessor(nodo.estado),
+        )
+    )
 
 
 def bfs(estado):

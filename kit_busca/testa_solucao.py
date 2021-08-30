@@ -110,6 +110,5 @@ class TestaSolucao(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    print(solucao.bfs("2_3541687"))
-
-# unittest.main()
+    # print(solucao.dfs("2_3541687"))
+    unittest.main()

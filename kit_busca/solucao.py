@@ -93,25 +93,32 @@ def bfs(estado):
     :return:
     """
     fronteira = collections.deque()
-    explorados = []
+    explorados = set()
+    estadosFronteira = set()
     inicio = Nodo(estado, None, None, 0)
     custoAtual = inicio.custo
     fronteira.append(inicio)
     contagemExpandido = 0
+
     while True:
-        if fronteira.count == 0:
+        if len(fronteira) == 0:
             return None
         v: Nodo = fronteira.popleft()
+        contagemExpandido += 1
         if v.custo > custoAtual:
             custoAtual = v.custo
-            contagemExpandido += 1
-            print(f"{custoAtual} - {expandido}")
+            # print(f"{custoAtual} - {contagemExpandido}")
         if v.estado == "12345678_":
             return caminho(v)
         if v.estado not in explorados:
-            explorados.append(v.estado)
+            explorados.add(v.estado)
             for expandido in expande(v):
-                fronteira.append(expandido)
+                if (
+                    expandido.estado not in estadosFronteira
+                    and expandido.estado not in explorados
+                ):
+                    fronteira.append(expandido)
+                    estadosFronteira.add(expandido.estado)
 
 
 def caminho(nodo: Nodo):
@@ -138,7 +145,33 @@ def dfs(estado):
     :return:
     """
     # substituir a linha abaixo pelo seu codigo
-    raise NotImplementedError
+    fronteira = collections.deque()
+    explorados = set()
+    estadosFronteira = set()
+    inicio = Nodo(estado, None, None, 0)
+    custoAtual = inicio.custo
+    fronteira.append(inicio)
+    contagemExpandido = 0
+
+    while True:
+        if len(fronteira) == 0:
+            return None
+        v: Nodo = fronteira.pop()
+        contagemExpandido += 1
+        if v.custo > custoAtual:
+            custoAtual = v.custo
+            # print(f"{custoAtual} - {contagemExpandido}")
+        if v.estado == "12345678_":
+            return caminho(v)
+        if v.estado not in explorados:
+            explorados.add(v.estado)
+            for expandido in expande(v):
+                if (
+                    expandido.estado not in estadosFronteira
+                    and expandido.estado not in explorados
+                ):
+                    fronteira.append(expandido)
+                    estadosFronteira.add(expandido.estado)
 
 
 def astar_hamming(estado):

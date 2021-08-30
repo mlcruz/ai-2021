@@ -1,3 +1,7 @@
+import collections
+import ctypes
+
+
 class Nodo:
     """
     Implemente a classe Nodo com os atributos descritos na funcao init
@@ -7,7 +11,6 @@ class Nodo:
     pai = None
     acao: str = None
     custo: int = None
-    filhos = []
 
     def __init__(self, estado, pai, acao, custo):
         """
@@ -27,8 +30,6 @@ class Nodo:
 # 1 2 3
 # 4 5 6
 # 7 8 9
-
-
 dictAdjacencia = {
     1: {"abaixo": 4, "direita": 2},
     2: {"abaixo": 5, "esquerda": 1, "direita": 3},
@@ -74,12 +75,12 @@ def expande(nodo: Nodo):
     :return:
     """
     # substituir a linha abaixo pelo seu codigo
-    return list(
-        map(
-            lambda tupla: Nodo(tupla[1], nodo, tupla[0], nodo.custo + 1),
-            sucessor(nodo.estado),
-        )
-    )
+    expandido = []
+
+    for acao, estado in sucessor(nodo.estado):
+        expandido.append(Nodo(estado, nodo, acao, nodo.custo + 1))
+
+    return expandido
 
 
 def bfs(estado):
@@ -91,8 +92,40 @@ def bfs(estado):
     :param estado: str
     :return:
     """
-    # substituir a linha abaixo pelo seu codigo
-    raise NotImplementedError
+    fronteira = collections.deque()
+    explorados = []
+    inicio = Nodo(estado, None, None, 0)
+    custoAtual = inicio.custo
+    fronteira.append(inicio)
+    contagemExpandido = 0
+    while True:
+        if fronteira.count == 0:
+            return None
+        v: Nodo = fronteira.popleft()
+        if v.custo > custoAtual:
+            custoAtual = v.custo
+            contagemExpandido += 1
+            print(f"{custoAtual} - {expandido}")
+        if v.estado == "12345678_":
+            return caminho(v)
+        if v.estado not in explorados:
+            explorados.append(v.estado)
+            for expandido in expande(v):
+                fronteira.append(expandido)
+
+
+def caminho(nodo: Nodo):
+    """
+    Computa o caminho de um nodo expandindos todos seus pais
+    """
+    caminho = collections.deque()
+    caminho.appendleft(nodo.acao)
+    atual = nodo.pai
+    while atual is not None:
+        if atual.acao is not None:
+            caminho.appendleft(atual.acao)
+        atual = atual.pai
+    return caminho
 
 
 def dfs(estado):

@@ -1,5 +1,5 @@
 import collections
-import ctypes
+import heapq
 
 
 class Nodo:
@@ -25,6 +25,11 @@ class Nodo:
         self.acao = acao
         self.custo = custo
         # substitua a linha abaixo pelo seu codigo
+
+    # implementamos um comparador qualquer de nodos para minHeap
+    # A comparação não tem semantica definida, mas precisa existir
+    def __lt__(self, other):
+        return False
 
 
 # 1 2 3
@@ -114,16 +119,48 @@ class Fila(collections.deque):
     def take(self):
         return self.popleft()
 
-    def add(self, data):
-        return self.append(data)
+    def add(self, nodo: Nodo):
+        return self.append(nodo)
 
 
 class Pilha(collections.deque):
     def take(self):
         return self.pop()
 
-    def add(self, data):
-        return self.append(data)
+    def add(self, nodo: Nodo):
+        return self.append(nodo)
+
+
+class Hamming:
+    # minheap como fila de prioridae
+    __heap: list
+
+    def __init__(self):
+        self.__heap = []
+
+    def __len__(self):
+        return len(self.__heap)
+
+    def add(self, nodo: Nodo):
+        # distancia de hemming do estado final
+        distancia = 0
+        for i, char in enumerate(nodo.estado):
+            expected = str(i + 1)
+            # se é _, compara corretamente
+            if i == 8:
+                expected = "_"
+
+            if char != expected:
+                distancia += 1
+
+        # Peso, Valor para minheap
+        return heapq.heappush(self.__heap, (distancia + nodo.custo, nodo))
+
+    def take(self):
+        # minheap mantem order no pop
+        nodo = heapq.heappop(self.__heap)
+        # sem o peso
+        return nodo[1]
 
 
 def busca_generica(estado, fronteira):
@@ -180,7 +217,8 @@ def astar_hamming(estado):
     :return:
     """
     # substituir a linha abaixo pelo seu codigo
-    raise NotImplementedError
+    fronteira = Hamming()
+    return busca_generica(estado, fronteira)
 
 
 def astar_manhattan(estado):

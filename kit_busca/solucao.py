@@ -163,6 +163,46 @@ class Hamming:
         return nodo[1]
 
 
+class Manhattan:
+    # minheap como fila de prioridae
+    __heap: list
+
+    def __init__(self):
+        self.__heap = []
+
+    def __len__(self):
+        return len(self.__heap)
+
+    def add(self, nodo: Nodo):
+        # distancia de manhattan do estado final
+        distancia = 0
+        for i, char in enumerate(nodo.estado):
+            expected = str(i + 1)
+            # se é _, compara corretamente
+            if i == 8:
+                expected = "_"
+
+            if char != expected:
+                posPeca = None
+                if char == "_":
+                    posPeca = 9
+                else:
+                    posPeca = int(char)
+
+                # 1 indexado
+                distAbsoluta = abs(posPeca - (i + 1))
+                distancia += distAbsoluta
+
+        # Peso, Valor para minheap
+        return heapq.heappush(self.__heap, (distancia + nodo.custo, nodo))
+
+    def take(self):
+        # minheap mantem order no pop
+        nodo = heapq.heappop(self.__heap)
+        # sem o peso
+        return nodo[1]
+
+
 def busca_generica(estado, fronteira):
     """
     Implementa a busca generica utilizando uma estrutura e dados (fila etc)
@@ -231,4 +271,5 @@ def astar_manhattan(estado):
     :return:
     """
     # substituir a linha abaixo pelo seu codigo
-    raise NotImplementedError
+    fronteira = Manhattan()
+    return busca_generica(estado, fronteira)

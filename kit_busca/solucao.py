@@ -92,33 +92,8 @@ def bfs(estado):
     :param estado: str
     :return:
     """
-    fronteira = collections.deque()
-    explorados = set()
-    estadosFronteira = set()
-    inicio = Nodo(estado, None, None, 0)
-    custoAtual = inicio.custo
-    fronteira.append(inicio)
-    contagemExpandido = 0
-
-    while True:
-        if len(fronteira) == 0:
-            return None
-        v: Nodo = fronteira.popleft()
-        contagemExpandido += 1
-        if v.custo > custoAtual:
-            custoAtual = v.custo
-            # print(f"{custoAtual} - {contagemExpandido}")
-        if v.estado == "12345678_":
-            return caminho(v)
-        if v.estado not in explorados:
-            explorados.add(v.estado)
-            for expandido in expande(v):
-                if (
-                    expandido.estado not in estadosFronteira
-                    and expandido.estado not in explorados
-                ):
-                    fronteira.append(expandido)
-                    estadosFronteira.add(expandido.estado)
+    fronteira = Fila()
+    return busca_generica(estado, fronteira)
 
 
 def caminho(nodo: Nodo):
@@ -135,6 +110,52 @@ def caminho(nodo: Nodo):
     return caminho
 
 
+class Fila(collections.deque):
+    def take(self):
+        return self.popleft()
+
+    def add(self, data):
+        return self.append(data)
+
+
+class Pilha(collections.deque):
+    def take(self):
+        return self.pop()
+
+    def add(self, data):
+        return self.append(data)
+
+
+def busca_generica(estado, fronteira):
+    """
+    Implementa a busca generica utilizando uma estrutura e dados (fila etc)
+    recebida como parametro
+    """
+    explorados = set()
+    estadosFronteira = set()
+    inicio = Nodo(estado, None, None, 0)
+    fronteira.add(inicio)
+    contagemExpandido = 0
+
+    while True:
+        if len(fronteira) == 0:
+            return None
+        v: Nodo = fronteira.take()
+        contagemExpandido += 1
+        if v.estado == "12345678_":
+            print(f"{v.custo} - {contagemExpandido}")
+            return caminho(v)
+        if v.estado not in explorados:
+            explorados.add(v.estado)
+            for expandido in expande(v):
+                if (
+                    expandido.estado not in estadosFronteira
+                    and expandido.estado not in explorados
+                ):
+                    fronteira.add(expandido)
+                    estadosFronteira.add(expandido.estado)
+
+
 def dfs(estado):
     """
     Recebe um estado (string), executa a busca em PROFUNDIDADE e
@@ -145,33 +166,8 @@ def dfs(estado):
     :return:
     """
     # substituir a linha abaixo pelo seu codigo
-    fronteira = collections.deque()
-    explorados = set()
-    estadosFronteira = set()
-    inicio = Nodo(estado, None, None, 0)
-    custoAtual = inicio.custo
-    fronteira.append(inicio)
-    contagemExpandido = 0
-
-    while True:
-        if len(fronteira) == 0:
-            return None
-        v: Nodo = fronteira.pop()
-        contagemExpandido += 1
-        if v.custo > custoAtual:
-            custoAtual = v.custo
-            # print(f"{custoAtual} - {contagemExpandido}")
-        if v.estado == "12345678_":
-            return caminho(v)
-        if v.estado not in explorados:
-            explorados.add(v.estado)
-            for expandido in expande(v):
-                if (
-                    expandido.estado not in estadosFronteira
-                    and expandido.estado not in explorados
-                ):
-                    fronteira.append(expandido)
-                    estadosFronteira.add(expandido.estado)
+    fronteira = Pilha()
+    return busca_generica(estado, fronteira)
 
 
 def astar_hamming(estado):
